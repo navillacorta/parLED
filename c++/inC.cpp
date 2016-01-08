@@ -166,6 +166,7 @@ void Slide(int repeat=1, bool reverse=false, long delay=5000)
             }
             // write color
             try {
+                std::cout << "R:" << R << "G:" << G << "B:" << B << std::endl;
                 changeColor(&USB, R, G, B);
             } catch (const char* msg) {
                 std::cerr << msg << std::endl;
