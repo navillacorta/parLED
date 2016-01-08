@@ -31,7 +31,7 @@ std::string int2string(int n, int width=3, bool padding=false)
     std::stringstream out;
     if (padding)
     {
-        out << std::setw(padding) << std::setfill('0') << n;
+        out << std::setw(width) << std::setfill('0') << n;
     }
     else
     {
@@ -218,12 +218,12 @@ void Slide(int repeat=1, bool reverse=false, long delay=5000)
 
 void initTest()
 {
-    for (int n=0; n < 4; n++)
+    for (int n=0; n < 5; n++)
     {
         changeColor(&USB, 255, 255, 255);
-        usleep(100000);
+        usleep(50000);
         changeColor(&USB, 0, 0, 0);
-        usleep(100000);
+        usleep(50000);
     }
 }
 
@@ -280,15 +280,14 @@ int main()
     try {
         while(true)
         {
-            //initTest();
+            initTest();
             /* *** WRITE *** */
-            Slide(2);
+            Slide(0, false, 10000);
 //            usleep(100000);
 //            crossFade(0,255, 0);
 //            usleep(100000);
 //            crossFade(255, 20, 50);
 //            usleep(100000);
-            initTest();
         }
     } catch (const char* msg) {
         std::cerr << msg << std::endl;
