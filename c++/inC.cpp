@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>     // string function definitions
@@ -7,6 +8,11 @@
 #include <errno.h>      // Error number definitions
 #include <termios.h>    // POSIX terminal control definitions
 #include <sstream>
+
+
+#define DEBUG
+
+
 
 /* DEFINE VARS */
 uint8_t redVal = 0;
@@ -20,10 +26,17 @@ uint8_t prevB = bluVal;
 int USB;
 
 
-std::string int2string(int n)
+std::string int2string(int n, int width=3, bool padding=false)
 {
     std::stringstream out;
-    out << n;
+    if (padding)
+    {
+        out << std::setw(padding) << std::setfill('0') << n;
+    }
+    else
+    {
+        out << std::setw(width) << n;
+    }
     std::string s = out.str();
     return s;
 }
@@ -119,7 +132,7 @@ void Slide(int repeat=1, bool reverse=false, long delay=5000)
         throw;
     }
 
-    while (counter < repeat)
+    while ((counter < repeat) || (!repeat))
     {
         while(true)
         {
@@ -176,10 +189,12 @@ void Slide(int repeat=1, bool reverse=false, long delay=5000)
             }
             // write color
             try {
+                #ifdef DEBUG
                 std::cout
                     << "R:" << int2string((int)R) << " "
                     << "G:" << int2string((int)G) << " "
                     << "B:" << int2string((int)B) << std::endl;
+                #endif
                 changeColor(&USB, R, G, B);
             } catch (const char* msg) {
                 std::cerr << msg << std::endl;
@@ -267,13 +282,13 @@ int main()
         {
             //initTest();
             /* *** WRITE *** */
-            Slide(0);
+            Slide(2);
 //            usleep(100000);
 //            crossFade(0,255, 0);
 //            usleep(100000);
 //            crossFade(255, 20, 50);
 //            usleep(100000);
-//            initTest();
+            initTest();
         }
     } catch (const char* msg) {
         std::cerr << msg << std::endl;
