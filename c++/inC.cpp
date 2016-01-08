@@ -140,7 +140,8 @@ void Slide(int repeat=1, bool reverse=false, long delay=5000)
             {
                 b -= 1;
                 r += 1;
-                if (repeat > 0) {
+                if (repeat) {
+                    counter++;
                     break;
                 }
             }
