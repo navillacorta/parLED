@@ -6,7 +6,7 @@
 #include <fcntl.h>      // File control definitions
 #include <errno.h>      // Error number definitions
 #include <termios.h>    // POSIX terminal control definitions
-
+#include <sstream>
 
 /* DEFINE VARS */
 uint8_t redVal = 0;
@@ -18,6 +18,17 @@ uint8_t prevG = grnVal;
 uint8_t prevB = bluVal;
 
 int USB;
+
+
+std::string int2string(int n)
+{
+    std::stringstream out;
+    out << n;
+    std::string s = out.str();
+    return s;
+}
+
+
 
 void changeColor(int *ser, uint8_t redV, uint8_t greenV, uint8_t blueV)
 {
@@ -108,7 +119,7 @@ void Slide(int repeat=1, bool reverse=false, long delay=5000)
         throw;
     }
 
-    while ( counter < repeat)
+    while (counter < repeat)
     {
         while(true)
         {
@@ -141,7 +152,6 @@ void Slide(int repeat=1, bool reverse=false, long delay=5000)
                 b -= 1;
                 r += 1;
                 if (repeat) {
-                    counter++;
                     break;
                 }
             }
@@ -166,7 +176,10 @@ void Slide(int repeat=1, bool reverse=false, long delay=5000)
             }
             // write color
             try {
-                std::cout << "R:" << R << "G:" << G << "B:" << B << std::endl;
+                std::cout
+                    << "R:" << int2string((int)R) << " "
+                    << "G:" << int2string((int)G) << " "
+                    << "B:" << int2string((int)B) << std::endl;
                 changeColor(&USB, R, G, B);
             } catch (const char* msg) {
                 std::cerr << msg << std::endl;
@@ -175,7 +188,7 @@ void Slide(int repeat=1, bool reverse=false, long delay=5000)
             usleep(delay);
         }
 
-        if (repeat > 0)
+        if (repeat)
         {
             counter += 1;
         }
@@ -190,34 +203,12 @@ void Slide(int repeat=1, bool reverse=false, long delay=5000)
 
 void initTest()
 {
-    int r, g, b= {0};
-    int loopTimeout = 2;
-    float lightTimeout = 0.25;
-    time_t startTime = time(0);
-    time_t lastLightTimeout = time(0);
-    bool lightState = false;
-    while(time(0) - startTime <= loopTimeout)
+    for (int n=0; n < 4; n++)
     {
-        if (time(0) - lastLightTimeout == lightTimeout)
-        {
-            lightState = !lightState;
-            lastLightTimeout = time(0);
-        }
-        if (lightState)
-        {
-            r = g = b = 255;
-        }
-        else
-        {
-            r = g = b = 0;
-        }
-        // write color
-        try {
-            changeColor(&USB, r, g, b);
-        } catch (const char* msg) {
-            std::cerr << msg << std::endl;
-            throw;
-        }
+        changeColor(&USB, 255, 255, 255);
+        usleep(100000);
+        changeColor(&USB, 0, 0, 0);
+        usleep(100000);
     }
 }
 
@@ -276,12 +267,13 @@ int main()
         {
             //initTest();
             /* *** WRITE *** */
-            Slide();
-            usleep(100000);
-            crossFade(0,255, 0);
-            usleep(100000);
-            crossFade(255, 20, 50);
-            usleep(100000);
+            Slide(0);
+//            usleep(100000);
+//            crossFade(0,255, 0);
+//            usleep(100000);
+//            crossFade(255, 20, 50);
+//            usleep(100000);
+//            initTest();
         }
     } catch (const char* msg) {
         std::cerr << msg << std::endl;
